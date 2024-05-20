@@ -9,9 +9,10 @@ class UserLogin extends StatelessWidget {
       child: Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Image.asset(
-            'assets/images/logo.png',
+            'assets/images/logoH.png',
             width: 200,
           ),
+          const SizedBox(height: 20),
           const Text(
             'HABERTO',
             style: TextStyle(
@@ -61,7 +62,7 @@ class UserLogin extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 50),
           const Row(children: <Widget>[
             Expanded(
               child: Divider(
@@ -84,6 +85,44 @@ class UserLogin extends StatelessWidget {
               ),
             ),
           ]),
+          const SizedBox(height: 50),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(42),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 75, vertical: 20),
+            ),
+            child: const Text(
+              'Sign in with password',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          RichText(
+            text: const TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                  text: "Don't have an account? ",
+                  style: TextStyle(color: Colors.black),
+                ),
+                TextSpan(
+                  text: ' Sign up',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 73, 145, 75),
+                    fontWeight:
+                        FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ]),
       ),
     ));
