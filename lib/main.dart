@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haberto_mobile/home_page/home_page.dart';
+import 'package:haberto_mobile/pages/home_page/home_page.dart';
 
 void main() {
   runApp(const HabertoApp());
