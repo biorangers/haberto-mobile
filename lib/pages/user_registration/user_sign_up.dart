@@ -1,8 +1,41 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:haberto_mobile/home_page/home_page.dart';
 
-class UserSignUp extends StatelessWidget {
-  const UserSignUp({Key? key}) : super(key: key);
+class UserSignUp extends StatefulWidget {
+  const UserSignUp({super.key});
+
+  @override
+  State<UserSignUp> createState() => _UserSignUp();
+}
+
+class _UserSignUp extends State<UserSignUp> {
+  bool _obscureText = true;
+  bool _obscureTextConfirmation = true;
+  bool _isPasswordValid = false;
+  bool _isPassConfirmation = false;
+
+  void _toggleVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  void _validatePassword(String value) {
+    final hasUppercase = value.contains(RegExp(r'[A-Z]'));
+    final hasLowercase = value.contains(RegExp(r'[a-z]'));
+    final hasDigit = value.contains(RegExp(r'[0-9]'));
+    final hasSpecialCharacter =
+        value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+    final hasMinLength = value.length >= 8;
+
+    setState(() {
+      _isPasswordValid = hasUppercase &&
+          hasLowercase &&
+          hasDigit &&
+          hasSpecialCharacter &&
+          hasMinLength;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,15 +44,11 @@ class UserSignUp extends StatelessWidget {
         title: const Text(
           "Sign Up",
           style: TextStyle(
-              color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        // backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            // color: Theme.of(context).colorScheme.onPrimary,
             color: Color.fromARGB(255, 38, 92, 40),
             size: 32,
           ),
@@ -34,124 +63,168 @@ class UserSignUp extends StatelessWidget {
             'assets/images/logoH.png',
             width: 200,
           ),
-          const SizedBox(height: 20),
-          const Text(
-            'HABERTO',
-            style: TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0),
-              fontSize: 30,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.none,
+          const SizedBox(height: 50),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    hintText: 'Enter your name',
+                    labelStyle: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 38, 92, 40),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Surname',
+                    hintText: 'Enter your surname',
+                    labelStyle: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 38, 92, 40),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  obscureText: _obscureText,
+                  onChanged: _validatePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
+                    labelStyle: const TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(
+                        color: _isPasswordValid
+                            ? const Color.fromARGB(255, 38, 92, 40)
+                            : const Color.fromARGB(255, 216, 36, 23),
+                        width: 2,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: _toggleVisibility,
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: !_isPasswordValid,
+                  child: const Text(
+                    'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Password Confirmation',
+                    hintText: 'Enter your password again',
+                    labelStyle: const TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(
+                        color: _isPassConfirmation
+                            ? const Color.fromARGB(255, 38, 92, 40)
+                            : const Color.fromARGB(255, 216, 36, 23),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Enter your email',
+                    labelStyle: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 38, 92, 40),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
-          const Text(
-            'Welcome to Haberto! Let\'s dive into your account!',
-            style: TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0),
-              fontSize: 16,
-              fontStyle: FontStyle.normal,
-              decoration: TextDecoration.none,
-            ),
-            softWrap: true,
-          ),
-          const SizedBox(height: 60),
-          OutlinedButton.icon(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Color.fromARGB(255, 35, 35, 35),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(42)),
-              ),
-              side: const BorderSide(
-                color: Color.fromARGB(255, 166, 166, 166),
-                width: 1,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-            ),
-            icon: Image.asset(
-              'assets/images/google.png',
-              width: 24,
-            ),
-            label: const Text(
-              'Continue with Google',
-              style: TextStyle(
-                color: Color.fromARGB(255, 0, 0, 0),
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 50),
-          const Row(children: <Widget>[
-            Expanded(
-              child: Divider(
-                color: Color.fromARGB(255, 166, 166, 166),
-                thickness: 1,
-                indent: 20,
-                endIndent: 20,
-              ),
-            ),
-            Text(
-              'or',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: Divider(
-                color: Color.fromARGB(255, 166, 166, 166),
-                thickness: 1,
-                indent: 20,
-                endIndent: 20,
-              ),
-            ),
-          ]),
-          const SizedBox(height: 50),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            },
             style: ElevatedButton.styleFrom(
-              // backgroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: const Color.fromARGB(255, 38, 92, 40),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(42),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 75, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
             ),
             child: const Text(
-              'Sign in with password',
+              'Sign Up',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-          ),
-          const SizedBox(height: 40),
-          RichText(
-            text: TextSpan(
-              children: <TextSpan>[
-                const TextSpan(
-                  text: "Don't have an account? ",
-                  style: TextStyle(color: Colors.black),
-                ),
-                TextSpan(
-                  text: ' Sign up',
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 73, 145, 75),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const UserSignUp()),
-                      );
-                    },
-                ),
-              ],
             ),
           ),
         ]),
