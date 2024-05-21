@@ -1,130 +1,259 @@
 import 'package:flutter/material.dart';
-// disable debug banner
-import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MyApp());
-  // disable debug banner
-  debugPaintSizeEnabled = false;
+  runApp(const HabertoApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HabertoApp extends StatelessWidget {
+  const HabertoApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'HABERTO',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.green,
+        textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: const MyHomePage(title: 'HABERTO'),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
 
-  void _incrementCounter() {
+  void _onItemTapped(int index) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/mcu_news.png', // TODO 1: Add Haberto logo
+              height: 24,
+              fit: BoxFit.cover,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            const SizedBox(width: 8.0),
+            const Text('Haberto'),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Trending News',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            _buildCategoryTabs(),
+            _buildTrendingNews(context),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Global Stories',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            _buildGlobalStories(context),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Discover',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            label: 'Bookmark',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabs() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          children: [
+            _buildCategoryTab('All', true),
+            _buildCategoryTab('Politics', false),
+            _buildCategoryTab('Technology', false),
+            _buildCategoryTab('Business', false),
+            // Diğer kategoriler buraya eklenebilir
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryTab(String title, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Chip(
+        label: Text(
+          title,
+          style: TextStyle(color: isSelected ? Colors.white : Colors.green),
+        ),
+        backgroundColor: isSelected ? Colors.green : Colors.white,
+        side: isSelected ? null : const BorderSide(color: Colors.green),
+      ),
+    );
+  }
+
+  Widget _buildTrendingNews(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildNewsCard(
+              context,
+              '1 Major MCU Phase 4 Movie Criticism Has Us Worried For Avengers: Secret Wars\' Director Possibility',
+              'assets/images/mcu_news.png',
+              'SCREENRANT',
+              123.1,
+              567000),
+          _buildNewsCard(
+              context,
+              'Spider-Man Fixing No Way Home\'s Biggest Overcorrection',
+              'assets/images/mcu_news.png',
+              'CBR',
+              234.2,
+              678000),
+          // Diğer haber kartları buraya eklenebilir
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGlobalStories(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildNewsCard(
+              context,
+              'Captain America: The First Avenger - Revisiting The MCU\'s Most Underrated Movie',
+              'assets/images/mcu_news.png',
+              'SCREENRANT',
+              98.3,
+              450000),
+          _buildNewsCard(
+              context,
+              'Why Batman Begins Is Still The Best Batman Movie',
+              'assets/images/mcu_news.png',
+              'CBR',
+              112.4,
+              470000),
+          // Diğer haber kartları buraya eklenebilir
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNewsCard(BuildContext context, String title, String imagePath,
+      String source, double views, int likes) {
+    return Container(
+      width: 250,
+      margin: const EdgeInsets.all(8.0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16.0)),
+              child: Image.asset(
+                imagePath,
+                height: 150,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                source,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  const Text('3 days ago',
+                      style: TextStyle(color: Colors.grey)),
+                  const Spacer(),
+                  const Icon(Icons.remove_red_eye,
+                      size: 16, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text('${views}K', style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.favorite, size: 16, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text('$likes', style: const TextStyle(color: Colors.grey)),
+                ],
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
