@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           children: [
             Image.asset(
-              'assets/images/mcu_news.png', // TODO 1: Add Haberto logo
+              'assets/images/logoH.png',
               height: 24,
               fit: BoxFit.cover,
             ),
