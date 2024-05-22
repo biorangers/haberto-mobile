@@ -14,7 +14,7 @@ class HabertoApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        colorSchemeSeed: Colors.green,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       home: const HomePage(),
