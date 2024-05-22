@@ -1,0 +1,36 @@
+{
+  "categories": [
+    {
+      "CategoryID": 3,
+      "CategoryName": "Egitim"
+    },
+    {
+      "CategoryID": 4,
+      "CategoryName": "Saglik"
+    },
+    {
+      "CategoryID": 5,
+      "CategoryName": "Müzik"
+    },
+    {
+      "CategoryID": 6,
+      "CategoryName": "Moda"
+    },
+    {
+      "CategoryID": 7,
+      "CategoryName": "Ekonomi"
+    },
+    {
+      "CategoryID": 8,
+      "CategoryName": "Seyahat"
+    },
+    {
+      "CategoryID": 9,
+      "CategoryName": "Bilim"
+    },
+    {
+      "CategoryID": 10,
+      "CategoryName": "Sanat"
+    }
+  ]
+}

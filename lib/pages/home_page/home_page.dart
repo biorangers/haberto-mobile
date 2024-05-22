@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:haberto_mobile/widgets/categories_widget.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -90,21 +91,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCategoryTabs() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          children: [
-            _buildCategoryTab('All', true),
-            _buildCategoryTab('Politics', false),
-            _buildCategoryTab('Technology', false),
-            _buildCategoryTab('Business', false),
-            // Diğer kategoriler buraya eklenebilir
-          ],
-        ),
-      ),
-    );
+    return CategoriesWidget();
   }
 
   Widget _buildCategoryTab(String title, bool isSelected) {
