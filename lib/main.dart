@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:haberto_mobile/pages/article_pages/article_pages.dart';
-
+import 'package:google_fonts/google_fonts.dart';
+import 'package:haberto_mobile/home_page/home_page.dart';
 
 void main() {
-  runApp(HabertoApp());
+  runApp(const HabertoApp());
 }
 
 class HabertoApp extends StatelessWidget {
+  const HabertoApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Haberto',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
+        textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: ArticlePage(),
+      home: const HomePage(),
     );
   }
 }
