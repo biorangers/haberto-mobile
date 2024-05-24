@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:haberto_mobile/pages/user_registration/user_sign_in.dart';
 import 'package:haberto_mobile/pages/user_registration/user_sign_up.dart';
 
 class UserLogin extends StatelessWidget {
@@ -92,7 +93,12 @@ class UserLogin extends StatelessWidget {
           ]),
           const SizedBox(height: 50),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserSignIn()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               // backgroundColor: Theme.of(context).colorScheme.primary,
               backgroundColor: const Color.fromARGB(255, 38, 92, 40),

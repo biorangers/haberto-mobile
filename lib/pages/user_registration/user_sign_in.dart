@@ -1,34 +1,113 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:haberto_mobile/pages/user_registration/user_login.dart';
+import 'package:haberto_mobile/pages/home_page/home_page.dart';
+import 'package:http/http.dart' as http;
 
-class UserSignUp extends StatefulWidget {
-  const UserSignUp({super.key});
-
+class UserSignIn extends StatefulWidget {
   @override
-  State<UserSignUp> createState() => _UserSignUp();
+  _UserSignInState createState() => _UserSignInState();
 }
 
-class _UserSignUp extends State<UserSignUp> {
+class _UserSignInState extends State<UserSignIn> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+
+  String _email = '';
+  String _password = '';
 
   bool _obscureText = true;
-  bool _obscureTextConfirmation = true;
+
+  void _login(String email, String password) async {
+    print('parametre email: $email');
+    print('parametre password: $password');
+
+    final encodedEmail = Uri.encodeComponent(email);
+    final encodedPassword = Uri.encodeComponent(password);
+    final url =
+        'http://localhost:5074/api/Auth/IsUserExist/$encodedEmail,%20$encodedPassword';
+    final uri = Uri.parse(url);
+
+    print('Requesting URL: $url');
+
+    try {
+      final response = await http.get(uri);
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResponse = jsonDecode(response.body);
+
+        List<dynamic> _users = jsonResponse;
+
+        bool isUserFound = false;
+        for (var user in _users) {
+          if (user is Map) {
+            String? userEmail = user['userEmail'];
+            String? userPassword = user['userPassword'];
+
+            if (userEmail == email && userPassword == password) {
+              isUserFound = true;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+              break;
+            }
+          }
+        }
+
+        if (!isUserFound) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Invalid email or password'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              ),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load data: ${response.reasonPhrase}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Network error! Please try again later.'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _getEmail(String email) {
+    _email = email;
+    print(_email);
+  }
+
+  void _getPassword(String password) {
+    _password = password;
+    print(_password);
+  }
 
   void _toggleVisibility() {
     setState(() {
       _obscureText = !_obscureText;
-    });
-  }
-
-  void _toggleVisibilityConfirmation() {
-    setState(() {
-      _obscureTextConfirmation = !_obscureTextConfirmation;
     });
   }
 
@@ -60,7 +139,7 @@ class _UserSignUp extends State<UserSignUp> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Sign Up",
+          "Sign In",
           style: TextStyle(
               color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
         ),
@@ -81,7 +160,7 @@ class _UserSignUp extends State<UserSignUp> {
             'assets/images/logoH.png',
             width: 200,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 150),
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Form(
@@ -89,74 +168,7 @@ class _UserSignUp extends State<UserSignUp> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: _nameController,
-                      keyboardType: TextInputType.name,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        hintText: 'Enter your name',
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(24)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 38, 92, 40),
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _surnameController,
-                      keyboardType: TextInputType.name,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Surname',
-                        hintText: 'Enter your surname',
-                        labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(24)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 38, 92, 40),
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your surname';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
+                      onChanged: _getEmail,
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(
@@ -196,6 +208,7 @@ class _UserSignUp extends State<UserSignUp> {
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
+                      onChanged: _getPassword,
                       controller: _passwordController,
                       obscureText: _obscureText,
                       style: const TextStyle(
@@ -233,54 +246,6 @@ class _UserSignUp extends State<UserSignUp> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
                         }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters long';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureTextConfirmation,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        hintText: 'Confirm your password',
-                        labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(24)),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 38, 92, 40),
-                            width: 2,
-                          ),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureTextConfirmation
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: _toggleVisibilityConfirmation,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
                         return null;
                       },
                     ),
@@ -291,16 +256,7 @@ class _UserSignUp extends State<UserSignUp> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState?.validate() ?? false) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text('Registration successful'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32),
-                    )));
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserLogin()),
-                );
+                _login(_email, _password);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -321,7 +277,7 @@ class _UserSignUp extends State<UserSignUp> {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
             ),
             child: const Text(
-              'Sign Up',
+              'Sign In',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
