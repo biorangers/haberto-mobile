@@ -120,14 +120,14 @@ class _HomePageState extends State<HomePage> {
               'assets/images/mcu_news.png',
               'SCREENRANT',
               123.1,
-              567000),
+              5.67),
           _buildNewsCard(
               context,
               'Spider-Man Fixing No Way Home\'s Biggest Overcorrection',
               'assets/images/mcu_news.png',
               'CBR',
               234.2,
-              678000),
+              6.7),
           // Diğer haber kartları buraya eklenebilir
         ],
       ),
@@ -146,14 +146,14 @@ class _HomePageState extends State<HomePage> {
               'assets/images/mcu_news.png',
               'SCREENRANT',
               98.3,
-              450000),
+              4.5),
           _buildNewsCard(
               context,
               'Why Batman Begins Is Still The Best Batman Movie',
               'assets/images/mcu_news.png',
               'CBR',
               112.4,
-              470000),
+              4.7),
           // Diğer haber kartları buraya eklenebilir
         ],
       ),
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNewsCard(BuildContext context, String title, String imagePath,
-      String source, double views, int likes) {
+      String source, double views, double likes) {
     return Container(
       width: 250,
       margin: const EdgeInsets.all(8.0),
@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                title,
+                title.length > 50 ? '${title.substring(0, 45)}...' : title,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -213,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 8),
                   const Icon(Icons.favorite, size: 16, color: Colors.grey),
                   const SizedBox(width: 4),
-                  Text('$likes', style: const TextStyle(color: Colors.grey)),
+                  Text('${likes}K', style: const TextStyle(color: Colors.grey)),
                 ],
               ),
             ),
