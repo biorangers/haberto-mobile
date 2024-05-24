@@ -1,12 +1,17 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:haberto_mobile/pages/user_registration/user_sign_up.dart';
 
 class UserLogin extends StatelessWidget {
+  void _signUp() {
+    print('Sign up');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      child: Center(
+      body: Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Image.asset(
             'assets/images/logoH.png',
@@ -89,11 +94,13 @@ class UserLogin extends StatelessWidget {
           ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              // backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: const Color.fromARGB(255, 38, 92, 40),
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(42),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 75, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 75, vertical: 20),
             ),
             child: const Text(
               'Sign in with password',
@@ -106,25 +113,32 @@ class UserLogin extends StatelessWidget {
           ),
           const SizedBox(height: 40),
           RichText(
-            text: const TextSpan(
+            text: TextSpan(
               children: <TextSpan>[
-                TextSpan(
+                const TextSpan(
                   text: "Don't have an account? ",
                   style: TextStyle(color: Colors.black),
                 ),
                 TextSpan(
                   text: ' Sign up',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color.fromARGB(255, 73, 145, 75),
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UserSignUp()),
+                      );
+                    },
                 ),
               ],
             ),
           ),
         ]),
       ),
-    ));
+    );
   }
 }
