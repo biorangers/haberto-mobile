@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ArticlePage extends StatelessWidget {
   @override
@@ -10,73 +11,10 @@ class ArticlePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16),
-            
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_back,
-                          color: Colors.green,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'Back',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.bookmark_border, color: Colors.black),
-                        onPressed: () {
-                          
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.share, color: Colors.black),
-                        onPressed: () {
-                          
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.download, color: Colors.black),
-                        onPressed: () {
-                          
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            buildTopBar(context),
             SizedBox(height: 16.0),
-            // Haber görseli
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Image.asset(
-                  'assets/images/news_image.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            buildArticleImage(),
             SizedBox(height: 16.0),
-            // Haber başlığı
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
@@ -87,7 +25,6 @@ class ArticlePage extends StatelessWidget {
                 ),
               ),
             ),
-            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -118,7 +55,6 @@ class ArticlePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
@@ -128,7 +64,6 @@ class ArticlePage extends StatelessWidget {
                 ),
               ),
             ),
-            
           ],
         ),
       ),
@@ -159,10 +94,69 @@ class ArticlePage extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.notifications),
           onPressed: () {
-            
+            // Bildirim ikonu işlemi
           },
         ),
       ],
+    );
+  }
+
+  Widget buildArticleImage(){
+    return Image.asset('assets/images/news_image.png')
+;  }
+
+  Padding buildTopBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.arrow_back,
+                  color: Colors.green,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  'Back',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.bookmark_border, color: Colors.black),
+                onPressed: () {
+                  // Yer imi butonu işlemi
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.share, color: Colors.black),
+                onPressed: () {
+                  // Paylaşma butonu işlemi
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.download, color: Colors.black),
+                onPressed: () {
+                  // İndir butonu işlemi
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
