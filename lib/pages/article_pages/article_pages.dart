@@ -75,21 +75,25 @@ class ArticlePage extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       title: Row(
-        children: [
-          Image.asset(
-            'assets/images/logoH.png',
-            height: 32,
-          ),
-          SizedBox(width: 8),
-          Text(
-            'Haberto',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+  mainAxisAlignment: MainAxisAlignment.center, // Sol tarafta hizalama
+  children: [
+    Image.asset(
+      'assets/images/logoH.png',
+      height: 40, // Logo boyutunu değiştirme
+    ),
+    SizedBox(width: 8),
+    Text(
+      'Haberto',
+      style: TextStyle(
+        color: Color.fromARGB(255, 0, 0, 0),
+        fontWeight: FontWeight.bold,
+        fontStyle: FontStyle.normal,
+        fontSize: 30, // Yazı boyutunu değiştirme
       ),
+    ),
+    SizedBox(width: 8),
+  ],
+),
       actions: [
         IconButton(
           icon: Icon(Icons.notifications),
@@ -102,8 +106,8 @@ class ArticlePage extends StatelessWidget {
   }
 
   Widget buildArticleImage(){
-    return Image.asset('assets/images/news_image.png')
-;  }
+    return Image.asset('assets/images/news_image.png');
+  }
 
   Padding buildTopBar(BuildContext context) {
     return Padding(
