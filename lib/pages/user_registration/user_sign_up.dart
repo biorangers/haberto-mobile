@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:haberto_mobile/pages/user_registration/user_login.dart';
+import 'package:http/http.dart' as http;
 
 class UserSignUp extends StatefulWidget {
   const UserSignUp({super.key});
@@ -44,6 +47,61 @@ class _UserSignUp extends State<UserSignUp> {
       _emailController.value = _emailController.value.copyWith(
         text: currentText.toLowerCase(),
         selection: TextSelection.collapsed(offset: currentText.length),
+      );
+    }
+  }
+
+  void _signUp(
+      String name, String surname, String email, String password) async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final _name = name;
+      final _surname = surname;
+      final _email = email;
+      final _password = password;
+      const url = 'http://localhost:5074/api/UserOperation/RegisterUser';
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'userName': _name,
+          'userSurname': _surname,
+          'userEmail': _email,
+          'userPassword': _password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Registration successful'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            )));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserLogin()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Registration failed: ${response.body}'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              )),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: const Text('Please fill in the required fields'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            )),
       );
     }
   }
@@ -289,29 +347,11 @@ class _UserSignUp extends State<UserSignUp> {
               )),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState?.validate() ?? false) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text('Registration successful'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32),
-                    )));
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserLogin()),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: const Text('Please fill in the required fields'),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      )),
-                );
-              }
-            },
+            onPressed: () => _signUp(
+                _nameController.text,
+                _surnameController.text,
+                _emailController.text,
+                _passwordController.text),
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,

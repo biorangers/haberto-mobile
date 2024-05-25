@@ -20,22 +20,14 @@ class _UserSignInState extends State<UserSignIn> {
   bool _obscureText = true;
 
   void _login(String email, String password) async {
-    print('parametre email: $email');
-    print('parametre password: $password');
-
     final encodedEmail = Uri.encodeComponent(email);
     final encodedPassword = Uri.encodeComponent(password);
     final url =
         'http://localhost:5074/api/Auth/IsUserExist/$encodedEmail,%20$encodedPassword';
     final uri = Uri.parse(url);
 
-    print('Requesting URL: $url');
-
     try {
       final response = await http.get(uri);
-
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = jsonDecode(response.body);
