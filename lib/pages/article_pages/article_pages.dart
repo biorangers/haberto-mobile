@@ -4,40 +4,13 @@ class ArticlePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/logoH.png',
-              height: 32,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Haberto',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Bildirim ikonu işlemi
-            },
-          ),
-        ],
-      ),
+      appBar: buildAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16),
-            // Geri butonu ve metni ile diğer butonlar
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -70,19 +43,19 @@ class ArticlePage extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.bookmark_border, color: Colors.black),
                         onPressed: () {
-                          // Yer imi butonu işlemi
+                          
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.share, color: Colors.black),
                         onPressed: () {
-                          // Paylaşma butonu işlemi
+                          
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.download, color: Colors.black),
                         onPressed: () {
-                          // İndir butonu işlemi
+                          
                         },
                       ),
                     ],
@@ -114,7 +87,7 @@ class ArticlePage extends StatelessWidget {
                 ),
               ),
             ),
-            // Kaynak ve tarih
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -145,7 +118,7 @@ class ArticlePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            // Haber içeriği
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
@@ -155,10 +128,41 @@ class ArticlePage extends StatelessWidget {
                 ),
               ),
             ),
-            // Daha fazla içerik buraya eklenebilir
+            
           ],
         ),
       ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      title: Row(
+        children: [
+          Image.asset(
+            'assets/images/logoH.png',
+            height: 32,
+          ),
+          SizedBox(width: 8),
+          Text(
+            'Haberto',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.notifications),
+          onPressed: () {
+            
+          },
+        ),
+      ],
     );
   }
 }
