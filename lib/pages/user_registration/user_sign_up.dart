@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:haberto_mobile/pages/user_registration/user_login.dart';
+import 'package:haberto_mobile/pages/user_registration/user_sign_up_base.dart';
 import 'package:http/http.dart' as http;
 
 class UserSignUp extends StatefulWidget {
@@ -12,6 +13,8 @@ class UserSignUp extends StatefulWidget {
 }
 
 class _UserSignUp extends State<UserSignUp> {
+  final UserSignUpBase _userSignUpBase = const UserSignUpBase();
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
@@ -51,43 +54,13 @@ class _UserSignUp extends State<UserSignUp> {
     }
   }
 
-  void _isUserExist(String email) async {
-    const url = 'http://localhost:5074/api/User';
-    final uri = Uri.parse(url);
+  void _isUserExist(BuildContext context, String email) async {
+    bool isUserExist = await _userSignUpBase.isUserExist(context, email);
 
-    try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonResponse = jsonDecode(response.body);
-
-        List<dynamic> _users = jsonResponse;
-
-        bool isUserFound = false;
-        for (var user in _users) {
-          if (user is Map) {
-            String? userEmail = user['userEmail'];
-
-            if (userEmail == email) {
-              isUserFound = true;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('User already exists'),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32),
-                  ),
-                ),
-              );
-              break;
-            }
-          }
-        }
-      }
-    } catch (e) {
+    if (isUserExist) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to check user existence: $e'),
+          content: const Text('User already exists'),
           backgroundColor: Theme.of(context).colorScheme.error,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(32),
@@ -100,7 +73,7 @@ class _UserSignUp extends State<UserSignUp> {
   void _signUp(
       String name, String surname, String email, String password) async {
     if (_formKey.currentState?.validate() ?? false) {
-      _isUserExist(email);
+      _isUserExist(context, email);
 
       final _name = name;
       final _surname = surname;

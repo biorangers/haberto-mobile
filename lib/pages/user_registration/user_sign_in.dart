@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:haberto_mobile/pages/home_page/home_page.dart';
-import 'package:http/http.dart' as http;
+import 'package:haberto_mobile/pages/user_registration/user_sign_in_base.dart';
 
 class UserSignIn extends StatefulWidget {
   @override
@@ -10,6 +8,8 @@ class UserSignIn extends StatefulWidget {
 }
 
 class _UserSignInState extends State<UserSignIn> {
+  final UserSignInBase _userSignInBase = UserSignInBase();
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -19,65 +19,19 @@ class _UserSignInState extends State<UserSignIn> {
 
   bool _obscureText = true;
 
-  void _login(String email, String password) async {
-    final encodedEmail = Uri.encodeComponent(email);
-    final encodedPassword = Uri.encodeComponent(password);
-    final url =
-        'http://localhost:5074/api/Auth/IsUserExist/$encodedEmail,%20$encodedPassword';
-    final uri = Uri.parse(url);
+  void _performLogin(
+      BuildContext context, String email, String password) async {
+    bool loginSuccess = await _userSignInBase.login(email, password);
 
-    try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonResponse = jsonDecode(response.body);
-
-        List<dynamic> _users = jsonResponse;
-
-        bool isUserFound = false;
-        for (var user in _users) {
-          if (user is Map) {
-            String? userEmail = user['userEmail'];
-            String? userPassword = user['userPassword'];
-
-            if (userEmail == email && userPassword == password) {
-              isUserFound = true;
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-              break;
-            }
-          }
-        }
-
-        if (!isUserFound) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Invalid email or password'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
-              ),
-            ),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load data: ${response.reasonPhrase}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error: $e');
+    if (loginSuccess) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Network error! Please try again later.'),
+          content: const Text('Invalid email or password'),
           backgroundColor: Theme.of(context).colorScheme.error,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(32),
@@ -248,7 +202,8 @@ class _UserSignInState extends State<UserSignIn> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState?.validate() ?? false) {
-                _login(_email, _password);
+                _performLogin(
+                    context, _emailController.text, _passwordController.text);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

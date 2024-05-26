@@ -5,10 +5,6 @@ import 'package:haberto_mobile/pages/user_registration/user_sign_in.dart';
 import 'package:haberto_mobile/pages/user_registration/user_sign_up.dart';
 
 class UserLogin extends StatelessWidget {
-  void _signUp() {
-    print('Sign up');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
