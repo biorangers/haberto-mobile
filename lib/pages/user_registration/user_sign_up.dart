@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haberto_mobile/home_page/home_page.dart';
+import 'package:haberto_mobile/pages/home_page/home_page.dart';
 import 'package:haberto_mobile/pages/user_registration/user_login.dart';
 
 class UserSignUp extends StatefulWidget {
