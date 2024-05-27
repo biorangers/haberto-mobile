@@ -105,9 +105,16 @@ class ArticlePage extends StatelessWidget {
     );
   }
 
-  Widget buildArticleImage(){
-    return Image.asset('assets/images/news_image.png');
-  }
+  Widget buildArticleImage() {
+  return Padding(
+    padding: EdgeInsets.all(8.0), // Kenarlarda 8.0 birimlik boşluk bırakın
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20.0), // Yuvarlak kenar yarıçapını belirleyin
+      child: Image.asset('assets/images/news_image.png'),
+    ),
+  );
+}
+
 
   Padding buildTopBar() {
     return Padding(
