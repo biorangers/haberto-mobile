@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:haberto_mobile/pages/article_pages/article_pages.dart";
 import "package:haberto_mobile/widgets/categories_widget.dart";
 
 class HomePage extends StatefulWidget {
@@ -120,14 +121,14 @@ class _HomePageState extends State<HomePage> {
               'assets/images/mcu_news.png',
               'SCREENRANT',
               123.1,
-              567000),
+              5.67),
           _buildNewsCard(
               context,
               'Spider-Man Fixing No Way Home\'s Biggest Overcorrection',
               'assets/images/mcu_news.png',
               'CBR',
               234.2,
-              678000),
+              6.7),
           // Diğer haber kartları buraya eklenebilir
         ],
       ),
@@ -146,14 +147,14 @@ class _HomePageState extends State<HomePage> {
               'assets/images/mcu_news.png',
               'SCREENRANT',
               98.3,
-              450000),
+              4.5),
           _buildNewsCard(
               context,
               'Why Batman Begins Is Still The Best Batman Movie',
               'assets/images/mcu_news.png',
               'CBR',
               112.4,
-              470000),
+              4.7),
           // Diğer haber kartları buraya eklenebilir
         ],
       ),
@@ -161,63 +162,73 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNewsCard(BuildContext context, String title, String imagePath,
-      String source, double views, int likes) {
+      String source, double views, double likes) {
     return Container(
       width: 250,
       margin: const EdgeInsets.all(8.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16.0)),
-              child: Image.asset(
-                imagePath,
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ArticlePage()),
+          );
+        },
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16.0)),
+                child: Image.asset(
+                  imagePath,
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  title.length > 50 ? '${title.substring(0, 45)}...' : title,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(
-                source,
-                style: const TextStyle(color: Colors.grey),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  source,
+                  style: const TextStyle(color: Colors.grey),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const Icon(Icons.access_time, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  const Text('3 days ago',
-                      style: TextStyle(color: Colors.grey)),
-                  const Spacer(),
-                  const Icon(Icons.remove_red_eye,
-                      size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text('${views}K', style: const TextStyle(color: Colors.grey)),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.favorite, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text('$likes', style: const TextStyle(color: Colors.grey)),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    const Text('3 days ago',
+                        style: TextStyle(color: Colors.grey)),
+                    const Spacer(),
+                    const Icon(Icons.remove_red_eye,
+                        size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text('${views}K',
+                        style: const TextStyle(color: Colors.grey)),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.favorite, size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text('${likes}K',
+                        style: const TextStyle(color: Colors.grey)),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
