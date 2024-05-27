@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:haberto_mobile/pages/home_page/home_page.dart';
 import 'package:haberto_mobile/pages/user_registration/user_login.dart';
+import 'package:haberto_mobile/pages/user_registration/user_sign_up_base.dart';
+import 'package:http/http.dart' as http;
 
 class UserSignUp extends StatefulWidget {
   const UserSignUp({super.key});
@@ -10,6 +14,8 @@ class UserSignUp extends StatefulWidget {
 }
 
 class _UserSignUp extends State<UserSignUp> {
+  final UserSignUpBase _userSignUpBase = const UserSignUpBase();
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
@@ -18,38 +24,8 @@ class _UserSignUp extends State<UserSignUp> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  String _name = '';
-  String _surname = '';
-  String _password = '';
-  String _email = '';
-
   bool _obscureText = true;
   bool _obscureTextConfirmation = true;
-  bool _isNameValid = true;
-  bool _isSurnameValid = true;
-  bool _isPasswordValid = true;
-  bool _isPasswordConfirmed = true;
-  bool _isEmailValid = true;
-
-  void _validateName(String value) {
-    final hasMinLength = value.length >= 3;
-    final hasDigit = !value.contains(RegExp(r'[0-9]'));
-
-    setState(() {
-      _isNameValid = hasMinLength && hasDigit;
-      _name = value;
-    });
-  }
-
-  void _validateSurname(String value) {
-    final hasMinLength = value.length >= 3;
-    final hasDigit = !value.contains(RegExp(r'[0-9]'));
-
-    setState(() {
-      _isSurnameValid = hasMinLength && hasDigit;
-      _surname = value;
-    });
-  }
 
   void _toggleVisibility() {
     setState(() {
@@ -60,40 +36,6 @@ class _UserSignUp extends State<UserSignUp> {
   void _toggleVisibilityConfirmation() {
     setState(() {
       _obscureTextConfirmation = !_obscureTextConfirmation;
-    });
-  }
-
-  void _validatePassword(String value) {
-    final hasUppercase = value.contains(RegExp(r'[A-Z]'));
-    final hasLowercase = value.contains(RegExp(r'[a-z]'));
-    final hasDigit = value.contains(RegExp(r'[0-9]'));
-    final hasSpecialCharacter =
-        value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-    final hasMinLength = value.length >= 8;
-
-    setState(() {
-      _isPasswordValid = hasUppercase &&
-          hasLowercase &&
-          hasDigit &&
-          hasSpecialCharacter &&
-          hasMinLength;
-      _password = value;
-    });
-  }
-
-  void _validatePasswordConfarmation(String value) {
-    setState(() {
-      _isPasswordConfirmed = value == _password;
-    });
-  }
-
-  void _validateEmail(String value) {
-    final hasAtSymbol = value.contains('@');
-    final hasDot = value.contains('.');
-
-    setState(() {
-      _isEmailValid = hasAtSymbol && hasDot;
-      _email = value;
     });
   }
 
@@ -109,6 +51,79 @@ class _UserSignUp extends State<UserSignUp> {
       _emailController.value = _emailController.value.copyWith(
         text: currentText.toLowerCase(),
         selection: TextSelection.collapsed(offset: currentText.length),
+      );
+    }
+  }
+
+  void _isUserExist(BuildContext context, String email) async {
+    bool isUserExist = await _userSignUpBase.isUserExist(context, email);
+
+    if (isUserExist) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('User already exists'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _signUp(
+      String name, String surname, String email, String password) async {
+    if (_formKey.currentState?.validate() ?? false) {
+      _isUserExist(context, email);
+
+      final _name = name;
+      final _surname = surname;
+      final _email = email;
+      final _password = password;
+      const url = 'http://localhost:5074/api/UserOperation/RegisterUser';
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'userName': _name,
+          'userSurname': _surname,
+          'userEmail': _email,
+          'userPassword': _password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Registration successful'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            )));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserLogin()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Registration failed: ${response.body}'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              )),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: const Text('Please fill in the required fields'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            )),
       );
     }
   }
@@ -354,29 +369,11 @@ class _UserSignUp extends State<UserSignUp> {
               )),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState?.validate() ?? false) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text('Registration successful'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32),
-                    )));
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserLogin()),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: const Text('Please fill in the required fields'),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      )),
-                );
-              }
-            },
+            onPressed: () => _signUp(
+                _nameController.text,
+                _surnameController.text,
+                _emailController.text,
+                _passwordController.text),
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
