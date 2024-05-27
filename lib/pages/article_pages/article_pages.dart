@@ -11,7 +11,7 @@ class ArticlePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16),
-            buildTopBar(context),
+            buildTopBar(), // Bu satırı tamamen kaldırıyoruz
             SizedBox(height: 16.0),
             buildArticleImage(),
             SizedBox(height: 16.0),
@@ -75,25 +75,25 @@ class ArticlePage extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       title: Row(
-  mainAxisAlignment: MainAxisAlignment.center, // Sol tarafta hizalama
-  children: [
-    Image.asset(
-      'assets/images/logoH.png',
-      height: 40, // Logo boyutunu değiştirme
-    ),
-    SizedBox(width: 8),
-    Text(
-      'Haberto',
-      style: TextStyle(
-        color: Color.fromARGB(255, 0, 0, 0),
-        fontWeight: FontWeight.bold,
-        fontStyle: FontStyle.normal,
-        fontSize: 30, // Yazı boyutunu değiştirme
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/logoH.png',
+            height: 40,
+          ),
+          SizedBox(width: 8),
+          Text(
+            'Haberto',
+            style: TextStyle(
+              color: Color.fromARGB(255, 0, 0, 0),
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.normal,
+              fontSize: 30,
+            ),
+          ),
+          SizedBox(width: 8),
+        ],
       ),
-    ),
-    SizedBox(width: 8),
-  ],
-),
       actions: [
         IconButton(
           icon: Icon(Icons.notifications),
@@ -109,55 +109,29 @@ class ArticlePage extends StatelessWidget {
     return Image.asset('assets/images/news_image.png');
   }
 
-  Padding buildTopBar(BuildContext context) {
+  Padding buildTopBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end, // Sağdaki ikonları hizala
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
+          IconButton(
+            icon: Icon(Icons.bookmark_border, color: Colors.black),
+            onPressed: () {
+              // Yer imi butonu işlemi
             },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: Colors.green,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  'Back',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.bookmark_border, color: Colors.black),
-                onPressed: () {
-                  // Yer imi butonu işlemi
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.share, color: Colors.black),
-                onPressed: () {
-                  // Paylaşma butonu işlemi
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.download, color: Colors.black),
-                onPressed: () {
-                  // İndir butonu işlemi
-                },
-              ),
-            ],
+          IconButton(
+            icon: Icon(Icons.share, color: Colors.black),
+            onPressed: () {
+              // Paylaşma butonu işlemi
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.download, color: Colors.black),
+            onPressed: () {
+              // İndir butonu işlemi
+            },
           ),
         ],
       ),
