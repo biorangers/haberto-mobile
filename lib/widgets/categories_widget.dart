@@ -21,8 +21,8 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
 
   Future<List<Category>> fetchCategories() async {
     final url = Platform.isAndroid
-        ? 'http://http://10.0.2.2:3000'
-        : 'http://localhost:3000'; // ? Android emulator : iOS emulator
+        ? 'http://10.0.2.2:5074'
+        : 'http://localhost:5074'; // ? Android emulator : iOS emulator
 
     final response = await http.get(Uri.parse('$url/categories'), headers: {
       'Accept': 'application/json',
