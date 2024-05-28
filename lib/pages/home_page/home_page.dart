@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:haberto_mobile/pages/article_pages/article_pages.dart";
 import "package:haberto_mobile/widgets/categories_widget.dart";
+import "package:haberto_mobile/widgets/navbar_widget.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,14 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,30 +57,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Discover',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Bookmark',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: const NavbarWidget(),
     );
   }
 
