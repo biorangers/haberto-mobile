@@ -21,17 +21,18 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
 
   Future<List<Category>> fetchCategories() async {
     final url = Platform.isAndroid
-        ? 'http://http://10.0.2.2:3000'
-        : 'http://localhost:3000'; // ? Android emulator : iOS emulator
+        ? 'http://10.0.2.2:5074'
+        : 'http://localhost:5074'; // ? Android emulator : iOS emulator
 
-    final response = await http.get(Uri.parse('$url/categories'), headers: {
+    final response =
+        await http.get(Uri.parse('$url/api/News/GetAllCategories'), headers: {
       'Accept': 'application/json',
       'Accept-Charset': 'utf-8',
     });
 
     if (response.statusCode == 200) {
       final List<dynamic> categoryJson = json.decode(response.body);
-      categoryJson.insert(0, {'CategoryID': -1, 'CategoryName': 'Tümü'});
+      categoryJson.insert(0, {'id': -1, 'categoryName': 'Tümü'});
       return categoryJson.map((json) => Category.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load categories');
@@ -54,7 +55,7 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No categories found'));
+          return const Center(child: Text('Kategoriler bulunamadı.'));
         } else {
           return Categories(
             categories: snapshot.data!,
