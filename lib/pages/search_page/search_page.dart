@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:haberto_mobile/pages/search_page/search_page_base.dart';
 
@@ -9,6 +10,9 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final localhost =
+      Platform.isAndroid ? 'http://10.0.2.2:5074' : 'http://localhost:5074';
+
   final SearchPageBase _searchPageBase = SearchPageBase();
   final TextEditingController _searchTextController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -237,8 +241,8 @@ class _SearchPageState extends State<SearchPage> {
                             return Card(
                               child: ListTile(
                                 leading: article['imageUrl'] != null
-                                    ? Image.asset(
-                                        'assets/images/news_image.png')
+                                    ? Image.network(
+                                        '$localhost/api/images/${article['imageUrl']}')
                                     : null,
                                 title: Text(
                                   article['title'] ?? 'No title',
