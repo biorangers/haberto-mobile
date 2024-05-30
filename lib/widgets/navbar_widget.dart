@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haberto_mobile/pages/profile_page/profile_page.dart';
 import 'package:haberto_mobile/pages/search_page/search_page.dart';
 
 class NavbarWidget extends StatefulWidget {
@@ -21,17 +22,16 @@ class _NavbarWidgetState extends State<NavbarWidget> {
         // Ana sayfa
         break;
       case 1:
-        print('INDEX: ' + index.toString());
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SearchPage()),
         );
         break;
       case 2:
-        // Kaydedilenler
-        break;
-      case 3:
-        // Profil
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
         break;
     }
   }
