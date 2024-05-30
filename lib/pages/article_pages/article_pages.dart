@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ArticlePage extends StatelessWidget {
+  final String articleUrl = 'https://www.example.com'; // Haber URL'si
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,10 +57,10 @@ class ArticlePage extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.share),
                     onPressed: () {
-                      // Butona tıklanınca hiçbir işlem yapılmayacak
+                      Share.share(articleUrl); // URL'yi paylaşma işlemi
                     },
                   ),
-                  const SizedBox(width: 4.0)
+                  const SizedBox(width: 4.0),
                 ],
               ),
             ),
