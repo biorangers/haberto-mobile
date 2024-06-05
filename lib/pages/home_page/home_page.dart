@@ -1,16 +1,27 @@
+import "dart:io";
+
 import "package:flutter/material.dart";
 import "package:haberto_mobile/pages/article_pages/article_pages.dart";
 import "package:haberto_mobile/widgets/categories_widget.dart";
 import "package:haberto_mobile/widgets/navbar_widget.dart";
+import "package:haberto_mobile/widgets/newslist_widget.dart";
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  get localhost =>
+      Platform.isAndroid ? 'http://10.0.2.2:5074' : 'http://localhost:5074';
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  get localhost =>
+      Platform.isAndroid ? 'http://10.0.2.2:5074' : 'http://localhost:5074';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,12 +37,6 @@ class _HomePageState extends State<HomePage> {
             const Text('Haberto'),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -40,7 +45,7 @@ class _HomePageState extends State<HomePage> {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Trending News',
+                'En Çok Okunan',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -49,11 +54,21 @@ class _HomePageState extends State<HomePage> {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Global Stories',
+                'Son Dakika',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            _buildGlobalStories(context),
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return Flexible(
+                    child: NewsList(
+                  endpoint: '/api/News/GetAllNews/{page_number}',
+                  parameters: const {
+                    'page_number': '1',
+                  },
+                ));
+              },
+            ),
           ],
         ),
       ),
@@ -80,59 +95,56 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTrendingNews(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildNewsCard(
-              context,
-              '1 Major MCU Phase 4 Movie Criticism Has Us Worried For Avengers: Secret Wars\' Director Possibility',
-              'assets/images/mcu_news.png',
-              'SCREENRANT',
-              123.1,
-              5.67),
-          _buildNewsCard(
-              context,
-              'Spider-Man Fixing No Way Home\'s Biggest Overcorrection',
-              'assets/images/mcu_news.png',
-              'CBR',
-              234.2,
-              6.7),
-          // Diğer haber kartları buraya eklenebilir
-        ],
-      ),
+    return FutureBuilder<List<News>>(
+      future: _fetchTopNews(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final newsList = snapshot.data;
+          return SizedBox(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: newsList?.length,
+              itemBuilder: (context, index) {
+                final news = newsList?[index];
+                return _buildNewsCard(
+                  context,
+                  news!.title,
+                  news.imagePath,
+                  news.id,
+                  news.viewCount,
+                );
+              },
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 
-  Widget _buildGlobalStories(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildNewsCard(
-              context,
-              'Captain America: The First Avenger - Revisiting The MCU\'s Most Underrated Movie',
-              'assets/images/mcu_news.png',
-              'SCREENRANT',
-              98.3,
-              4.5),
-          _buildNewsCard(
-              context,
-              'Why Batman Begins Is Still The Best Batman Movie',
-              'assets/images/mcu_news.png',
-              'CBR',
-              112.4,
-              4.7),
-          // Diğer haber kartları buraya eklenebilir
-        ],
-      ),
-    );
+  Future<List<News>> _fetchTopNews() async {
+    final response =
+        await http.get(Uri.parse('$localhost/api/News/GetTopArticles'));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      return jsonData.map<News>((json) => News.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to fetch top news');
+    }
   }
 
-  Widget _buildNewsCard(BuildContext context, String title, String imagePath,
-      String source, double views, double likes) {
+  Widget _buildNewsCard(
+    BuildContext context,
+    String title,
+    String imagePath,
+    int id,
+    int viewCount,
+  ) {
     return Container(
       width: 250,
       margin: const EdgeInsets.all(8.0),
@@ -140,7 +152,7 @@ class _HomePageState extends State<HomePage> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ArticlePage()),
+            MaterialPageRoute(builder: (context) => ArticlePage(id: id)),
           );
         },
         child: Card(
@@ -153,8 +165,8 @@ class _HomePageState extends State<HomePage> {
               ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(16.0)),
-                child: Image.asset(
-                  imagePath,
+                child: Image.network(
+                  '${widget.localhost}/api/images/$imagePath',
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -165,34 +177,19 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                   title.length > 50 ? '${title.substring(0, 45)}...' : title,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  source,
-                  style: const TextStyle(color: Colors.grey),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    const Icon(Icons.access_time, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    const Text('3 days ago',
-                        style: TextStyle(color: Colors.grey)),
-                    const Spacer(),
                     const Icon(Icons.remove_red_eye,
                         size: 16, color: Colors.grey),
                     const SizedBox(width: 4),
-                    Text('${views}K',
-                        style: const TextStyle(color: Colors.grey)),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.favorite, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text('${likes}K',
+                    Text('$viewCount',
                         style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -201,6 +198,29 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class News {
+  final String title;
+  final String imagePath;
+  final int id;
+  final int viewCount;
+
+  News({
+    required this.title,
+    required this.imagePath,
+    required this.id,
+    required this.viewCount,
+  });
+
+  factory News.fromJson(Map<String, dynamic> json) {
+    return News(
+      title: json['articleTitle'],
+      imagePath: json['articleImageURL'],
+      id: json['articleID'],
+      viewCount: json['articleView'],
     );
   }
 }

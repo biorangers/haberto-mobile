@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 
 class SearchPageBase {
+  final localhost =
+      Platform.isAndroid ? 'http://10.0.2.2:5074' : 'http://localhost:5074';
   Future<List<Map<String, dynamic>>> searchArticles(
       int pageNumber, String search) async {
     final url =
-        'http://localhost:5074/api/NewsOperation/SearchArticles/$pageNumber,%20$search';
+        '$localhost/api/NewsOperation/SearchArticles/$pageNumber,%20$search';
     final uri = Uri.parse(url);
 
     try {
@@ -46,7 +49,7 @@ class SearchPageBase {
   }
 
   Future<List<Map<String, dynamic>>> getCategories() async {
-    const url = 'http://localhost:5074/api/News/GetAllCategories';
+    final url = '$localhost/api/News/GetAllCategories';
     final uri = Uri.parse(url);
 
     try {
@@ -83,7 +86,7 @@ class SearchPageBase {
   Future<List<Map<String, dynamic>>> getArticlesByCategory(
       int pageNumber, int categoryId) async {
     final url =
-        'http://localhost:5074/api/News/GetNewsByCategoryId/$pageNumber,%20$categoryId';
+        '$localhost/api/News/GetNewsByCategoryId/$pageNumber,%20$categoryId';
     final uri = Uri.parse(url);
     print(uri);
 
