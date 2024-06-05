@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:haberto_mobile/pages/search_page/search_page_base.dart';
+import 'package:haberto_mobile/widgets/newslist_widget.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -48,7 +49,9 @@ class _SearchPageState extends State<SearchPage> {
             _scrollController.position.maxScrollExtent &&
         !_isLoading &&
         _hasMore) {
-      _searchArticles(_pageNumber, _searchText);
+      _searchText.isEmpty
+          ? _searchArticlesByCategoryId(1, _selectedCategoryId!)
+          : _searchArticles(1, _searchText);
     }
   }
 
@@ -225,46 +228,13 @@ class _SearchPageState extends State<SearchPage> {
           ),
           _isLoading && _articles.isEmpty
               ? const Center(child: CircularProgressIndicator())
-              : Expanded(
-                  child: _articles.isEmpty
-                      ? const Center(child: Text('No articles found.'))
-                      : ListView.builder(
-                          controller: _scrollController,
-                          itemCount: _articles.length + (_hasMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == _articles.length) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            final article = _articles[index];
-                            return Card(
-                              child: ListTile(
-                                leading: article['imageUrl'] != null
-                                    ? Image.network(
-                                        '$localhost/api/images/${article['imageUrl']}')
-                                    : null,
-                                title: Text(
-                                  article['title'] ?? 'No title',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                  softWrap: true,
-                                  maxLines: 3,
-                                ),
-                                subtitle: Text(
-                                    article['categoryName'] ?? 'No category'),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.remove_red_eye),
-                                    const SizedBox(width: 4),
-                                    Text(article['views'].toString()),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+              : NewsList(
+                  endpoint:
+                      '/api/NewsOperation/SearchArticles/{page_number}, {search}',
+                  parameters: {
+                    'page_number': _pageNumber.toString(),
+                    'search': _searchText,
+                  },
                 ),
         ],
       ),
