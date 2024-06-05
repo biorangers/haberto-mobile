@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserSignInBase {
   const UserSignInBase();
@@ -21,10 +22,12 @@ class UserSignInBase {
 
         for (var user in _users) {
           if (user is Map) {
+            int userId = user['authorID'];
             String? userEmail = user['userEmail'];
             String? userPassword = user['userPassword'];
 
             if (userEmail == email && userPassword == password) {
+              await saveUserId(userId.toString());
               return true;
             }
           }
@@ -38,6 +41,16 @@ class UserSignInBase {
     } catch (e) {
       print('Error: $e');
       return false;
+    }
+  }
+
+  Future<void> saveUserId(String userId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_id', userId);
+      print("Kullanıcı ID'si kaydedildi: $userId");
+    } catch (e) {
+      print("Error: $e");
     }
   }
 }

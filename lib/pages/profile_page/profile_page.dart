@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:haberto_mobile/pages/profile_page/profile_page_base.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -8,13 +10,78 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _username = "John Doe";
-  String _about =
-      "This is a brief about me section. I love Flutter and mobile development.";
-  String _role = "Author";
-  String _email = "john.doe@example.com";
-  String _creationDate = "2023-01-01";
-  bool _isActive = true;
+  final ProfilePageBase _profilePageBase = ProfilePageBase();
+
+  String _username = '';
+  String _about = '';
+  String _role = '';
+  String _email = '';
+  String _userStatus = '';
+  String _imageUrlStr = '';
+  bool _isActive = false;
+  bool _isOnWaiting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    String? userId = await getUserId();
+    if (userId != null) {
+      _getUserById(userId.toString());
+    }
+  }
+
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('user_id');
+    print("Kullanıcı ID'si getirildi: $userId");
+    return userId;
+  }
+
+  void _getUserById(String id) async {
+    final users = await _profilePageBase.getUserById(id);
+
+    if (users.isNotEmpty) {
+      setState(() {
+        _username = users[0]['name'] + ' ' + users[0]['surname'];
+        _about = users[0]['bio'];
+        _email = users[0]['email'];
+        _role = users[0]['role'];
+        _userStatus = users[0]['status'];
+        final _imageUrl = users[0]['imageUrl'];
+        _imageUrlStr = 'http://localhost:5074/api/images/$_imageUrl';
+      });
+      _handleUserStatus();
+    }
+  }
+
+  void _handleUserStatus() {
+    print(_isOnWaiting);
+    switch (_userStatus) {
+      case 'Aktif':
+        setState(() {
+          _isActive = true;
+        });
+        break;
+      case 'Pasif':
+        setState(() {
+          _isActive = false;
+        });
+        break;
+      case 'Beklemede':
+        setState(() {
+          _isOnWaiting = true;
+          print(_isOnWaiting);
+        });
+      default:
+        setState(() {
+          _isActive = false;
+        });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +112,9 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            const CircleAvatar(
+            CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(
-                  'https://www.w3schools.com/howto/img_avatar.png'),
+              backgroundImage: NetworkImage(_imageUrlStr),
             ),
             const SizedBox(height: 20),
             Column(
@@ -66,7 +132,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(width: 8),
                         Icon(
-                          Icons.verified_rounded,
+                          _isActive
+                              ? Icons.verified
+                              : _isOnWaiting
+                                  ? Icons.watch_later_outlined
+                                  : Icons.block,
                           size: 24,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -80,7 +150,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 "Hello! I'm Jane, a passionate Flutter developer.";
                             _role = "Lead Developer";
                             _email = "jane.smith@example.com";
-                            _creationDate = "2024-01-01";
                             _isActive = false;
                           });
                         },
