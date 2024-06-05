@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ArticlePage extends StatelessWidget {
+  final int id;
+  get localhost =>
+      Platform.isAndroid ? 'http://10.0.2.2:5074' : 'http://localhost:5074';
+
+  const ArticlePage({super.key, required this.id});
+  
   final String articleUrl = 'https://www.example.com'; // Haber URL'si
 
   @override
