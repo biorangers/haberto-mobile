@@ -43,12 +43,10 @@ class _UserSignInState extends State<UserSignIn> {
 
   void _getEmail(String email) {
     _email = email;
-    print(_email);
   }
 
   void _getPassword(String password) {
     _password = password;
-    print(_password);
   }
 
   void _toggleVisibility() {
