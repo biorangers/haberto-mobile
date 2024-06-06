@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import "dart:io";
+import "package:http/http.dart" as http;
+import 'dart:convert';
+import 'share_plus/share_plus.dart';
 
 class ArticlePage extends StatelessWidget {
   final int id;
@@ -7,83 +10,87 @@ class ArticlePage extends StatelessWidget {
       Platform.isAndroid ? 'http://10.0.2.2:5074' : 'http://localhost:5074';
 
   const ArticlePage({super.key, required this.id});
-  
-  final String articleUrl = 'https://www.example.com'; // Haber URL'si
+
+  final String articleUrl = 'https://www.example.com'; // Örnek haber URL'si
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 16),
-            SizedBox(height: 16.0),
-            buildArticleImage(),
-            SizedBox(height: 16.0),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                '1 Major MCU Phase 4 Movie Criticism Has Us Worried For Avengers: Secret Wars\' Director Possibility',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
+    return FutureBuilder<Article>(
+      future: fetchArticle(id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final article = snapshot.data!;
+          return Scaffold(
+            appBar: buildAppBar(),
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'SCREENRANT',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(height: 16),
+                  const SizedBox(height: 16.0),
+                  buildArticleImage(article.imageUrl),
+                  const SizedBox(height: 16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      article.title,
+                      style: const TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 8.0),
-                  const Text(
-                    '3 days ago',
-                    style: TextStyle(
-                      color: Colors.grey,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          article.date.toString(),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const Spacer(),
+                        const Icon(Icons.visibility),
+                        const SizedBox(width: 4.0),
+                        Text(article.views.toString()),
+                        const SizedBox(width: 16.0),
+                        IconButton(
+                          icon: const Icon(Icons.share),
+                          onPressed: () {
+                            Share.share(articleUrl);
+                          },
+                        ),
+                        const SizedBox(width: 4.0),
+                      ],
                     ),
                   ),
-                  const Spacer(),
-                  const Icon(Icons.visibility),
-                  const SizedBox(width: 4.0),
-                  const Text('123.1K'),
-                  const SizedBox(width: 16.0),
-                  const Icon(Icons.comment),
-                  const SizedBox(width: 4.0),
-                  const Text('567K'),
-                  const Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.share),
-                    onPressed: () {
-                      Share.share(articleUrl); // URL'yi paylaşma işlemi
-                    },
+                  const SizedBox(height: 16.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      article.content,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                      ),
+                      softWrap: true,
+                    ),
                   ),
-                  const SizedBox(width: 4.0),
                 ],
               ),
             ),
-            SizedBox(height: 16.0),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'An MCU director wants to helm Avengers: Secret Wars, but a major criticism of his Phase 4 film might be a reason for pause. Secret Wars still doesn\'t have a director, and it will be a tremendous task for any filmmaker to undertake.',
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-                softWrap: true,
-              ),
-            ),
-          ],
-        ),
-      ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 
@@ -115,13 +122,66 @@ class ArticlePage extends StatelessWidget {
     );
   }
 
-  Widget buildArticleImage() {
+  Widget buildArticleImage(String imageUrl) {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20.0),
-        child: Image.asset('assets/images/news_image.png'),
+        child: Image.network(
+          '$localhost/api/images/$imageUrl',
+          height: 200,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
       ),
+    );
+  }
+
+  Future<Article> fetchArticle(int id) async {
+    final response =
+        await http.get(Uri.parse('$localhost/api/News/GetNewsById/$id'));
+    if (response.statusCode == 200) {
+      return Article.fromJson(jsonDecode(response.body)[0]);
+    } else {
+      throw Exception('Failed to fetch article');
+    }
+  }
+}
+
+class Article {
+  final int id;
+  final String title;
+  final String content;
+  final String imageUrl;
+  final DateTime date;
+  final int views;
+  final String category;
+  final int authorId;
+  final String author;
+
+  Article({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.imageUrl,
+    required this.date,
+    required this.views,
+    required this.category,
+    required this.authorId,
+    required this.author,
+  });
+
+  factory Article.fromJson(Map<String, dynamic> json) {
+    return Article(
+      id: json['articleID'],
+      title: json['articleTitle'],
+      content: json['articleContent'],
+      imageUrl: json['articleImageURL'],
+      date: DateTime.parse(json['articlePublishedDate']),
+      views: json['articleView'],
+      category: json['categoryName'],
+      authorId: json['authorID'],
+      author: json['author'],
     );
   }
 }
