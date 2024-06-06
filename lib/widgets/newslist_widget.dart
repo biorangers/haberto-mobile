@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:haberto_mobile/pages/article_pages/article_pages.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -137,6 +138,15 @@ class _NewsListState extends State<NewsList> {
                               Text(article['views'].toString()),
                             ],
                           ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ArticlePage(id: article['id']),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },

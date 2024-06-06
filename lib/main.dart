@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:haberto_mobile/widgets/theme_provider.dart';
-import 'package:haberto_mobile/widgets/theme_toggle_button.dart';
-import 'package:haberto_mobile/pages/article_pages/article_pages.dart';
-import 'package:haberto_mobile/pages/article_pages/article_pages.dart';
 import 'package:haberto_mobile/pages/home_page/home_page.dart';
-import 'package:haberto_mobile/pages/search_page/search_page.dart';
-import 'package:haberto_mobile/pages/search_page/search_page_base.dart';
-import 'package:haberto_mobile/pages/user_registration/user_login.dart';
-
 
 void main() {
   runApp(const HabertoApp());
@@ -42,7 +35,7 @@ class HabertoApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
             themeMode: themeProvider.themeMode,
-            home: HomePage(),
+            home: const HomePage(),
           );
         },
       ),
